@@ -53,14 +53,20 @@
     (on-close channel (partial display-disconnect! channel))
     (on-receive channel process-display-new-message)))
 
+(defn send-display-event! [event]
+  (do
+    (println "-> display" event)
+    (send! @display-channel (json/write-str event))))
 
 (defn new-player [] {:x 10 :y 10})
 
 (defn player-connect! [channel]
-  (let [player-uuid (uuid)]
+  (let [player-uuid (uuid)
+        new-player (new-player)]
     (do
-      (swap! players assoc player-uuid (new-player))
+      (swap! players assoc player-uuid new-player)
       (send! channel (str "your uuid is" player-uuid))
+      (send-display-event! { :name "new-player" :player new-player})
       (println "Player connected."))))
 
 (defn player-disconnect! [channel status]
