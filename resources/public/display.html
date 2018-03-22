@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h1>Dotty</h1>
+    <div>
+      To join this game visit http://localhost:3000 with your mobile phone.
+    </div>
+
+    <div id="canvas"></div>
+  </body>
+  <script type="text/javascript">
+
+
+var socket = new WebSocket('ws://localhost:3000/websocket');
+
+socket.addEventListener('open', function(event) {
+  console.log('got open', event);
+});
+
+
+socket.onmessage = function(event) {
+  // json = JSON.parse(event.data);
+  console.log('got event', event)
+
+};
+
+// send message to server
+var socketPush  = function(message) {
+  if (socket.readyState === WebSocket.OPEN) {
+    console.log('sending msg', message);
+    socket.send(message);
+  } 
+};
+  </script>
+
+</html>

@@ -3,19 +3,22 @@
             [compojure.core :refer [routes wrap-routes GET defroutes]]
             [clojure.data.json :as json]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [ring.middleware.resource :refer [wrap-resource]])
+            [ring.middleware.resource :refer [wrap-resource]]
+            [ring.util.response :refer [resource-response]]
+            [clojure.java.io :as io])
   (:gen-class))
 
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 (defn render [body] { :status 200 :body body :headers {"Content-Type" "text/html"}})
 (defn render-json [data] { :status 200 :body (json/write-str data) :headers {"Content-Type" "text/json" "Access-Control-Allow-Origin" "*"}})
+(defn render-html-file [path] { :status 200 :body (io/input-stream (io/resource (str "public/" path))) :headers {"Content-Type" "text/html"}})
 
-(defn homepage-handler [r] (render "HOMEPAGE"))
+(defn homepage-handler [r] (render-html-file "index.html"))
 (defn debug-handler [r] (render "DEBUG"))
 (defn game-handler [r] (render "GAME"))
 (defn join-handler [r] (render "JOIN"))
-(defn display-handler [r] (render "DISPLAY"))
+(defn display-handler [r] (render-html-file "display.html"))
 
 (defroutes http-routes
   (GET "/" [] homepage-handler)
@@ -30,10 +33,13 @@
     {:status 302}))
 
 (defn connect! [channel]
-  (println "Connected"))
+  (do
+    ;; gen uuid and add to atom with channel
+    (send! channel (str "your id is " (uuid)))
+    (println "Connected" channel)))
 
-(defn disconnect! [channel]
-  (println "Disconnected"))
+(defn disconnect! [channel status]
+  (println "Disconnected" channel status))
 
 (defn ws-handler [request]
   (with-channel request channel
