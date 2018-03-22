@@ -8,6 +8,7 @@
             [clojure.java.io :as io])
   (:gen-class))
 
+(defonce players (atom {}))
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
 (defn render [body] { :status 200 :body body :headers {"Content-Type" "text/html"}})
@@ -15,9 +16,9 @@
 (defn render-html-file [path] { :status 200 :body (io/input-stream (io/resource (str "public/" path))) :headers {"Content-Type" "text/html"}})
 
 (defn homepage-handler [r] (render-html-file "index.html"))
-(defn debug-handler [r] (render "DEBUG"))
+(defn debug-handler [r] (render-json {:players @players}))
 (defn game-handler [r] (render "GAME"))
-(defn join-handler [r] (render "JOIN"))
+(defn join-handler [r] (render-html-file "join.html"))
 (defn display-handler [r] (render-html-file "display.html"))
 
 (defroutes http-routes
@@ -27,28 +28,58 @@
   (GET "/join" [] join-handler)
   (GET "/display" [] display-handler))
 
-(defn process-new-message [raw_msg]
+(defn process-display-new-message [raw_msg]
   (let [player (json/read-str raw_msg :fn-key keyword)]
     (println "Get new message" raw_msg)
     {:status 302}))
 
-(defn connect! [channel]
+(defonce display-channel (atom nil))
+
+(defn display-connect! [channel]
   (do
-    ;; gen uuid and add to atom with channel
-    (send! channel (str "your id is " (uuid)))
-    (println "Connected" channel)))
+    (reset! display-channel channel)
+    (println "Display connected.")))
 
-(defn disconnect! [channel status]
-  (println "Disconnected" channel status))
+(defn display-disconnect! [channel status]
+  (do
+    (reset! display-channel nil)
+    (println "Display Disconnected." status)))
 
-(defn ws-handler [request]
+(defn display-connected? [] (not (nil? @display-channel)))
+
+(defn display-ws-handler [request]
   (with-channel request channel
-    (connect! channel)
-    (on-close channel (partial disconnect! channel))
-    (on-receive channel process-new-message)))
+    (display-connect! channel)
+    (on-close channel (partial display-disconnect! channel))
+    (on-receive channel process-display-new-message)))
+
+
+(defn new-player [] {:x 10 :y 10})
+
+(defn player-connect! [channel]
+  (let [player-uuid (uuid)]
+    (do
+      (swap! players assoc player-uuid (new-player))
+      (send! channel (str "your uuid is" player-uuid))
+      (println "Player connected."))))
+
+(defn player-disconnect! [channel status]
+  (do
+    (println "Player Disconnected." status)))
+
+(defn process-player-new-message [raw_msg]
+  (println "Player message received" raw_msg)
+  {:status 302})
+
+(defn player-ws-handler [request]
+  (with-channel request channel
+    (player-connect! channel)
+    (on-close channel (partial player-disconnect! channel))
+    (on-receive channel process-player-new-message)))
 
 (defroutes websocket-routes
-  (GET "/websocket" request (ws-handler request)))
+  (GET "/ws/display" request (display-ws-handler request))
+  (GET "/ws/player" request (player-ws-handler request)))
 
 (def all-routes (routes websocket-routes http-routes))
 
