@@ -1,0 +1,6 @@
+static assets are served via http-kit, this is okay for local dev, but on server Apache (or whatever) should serve these.
+they also do not have caching headers. Ideally we also add digest. But this can come later.
+However apache will not be able to see inside jar, so instead http-kit can serve and apache can cache.
+
+
+
