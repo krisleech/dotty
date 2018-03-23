@@ -29,7 +29,7 @@
   (GET "/display" [] display-handler))
 
 (defn process-display-new-message [raw_msg]
-  (let [player (json/read-str raw_msg :fn-key keyword)]
+  (let [player (json/read-str raw_msg :key-fn keyword)]
     (println "Get new message" raw_msg)
     {:status 302}))
 
@@ -60,12 +60,13 @@
 
 (defn new-player [] {:id (uuid) :x (rand-int 1000) :y (rand-int 1000)})
 
+
 (defn player-connect! [channel]
   (let [new-player (new-player)
         player-id (:id new-player)]
     (do
       (swap! players assoc player-id new-player)
-      (send! channel (str "your uuid is" player-id))
+      (send! channel (json/write-str { :type "id-created" :id player-id}))
       (send-display-event! { :type "new-player" :player new-player})
       (println "Player connected."))))
 
@@ -73,9 +74,20 @@
   (do
     (println "Player Disconnected." status)))
 
-(defn process-player-new-message [raw_msg]
-  (println "Player message received" raw_msg)
-  {:status 302})
+;; send to display
+(defn handle-player-move-event [event]
+  (send-display-event! event))
+
+(defn process-player-new-message [message]
+  (let [event (json/read-str message :key-fn keyword)
+        event-type (:type event)]
+    (do
+      (println "<- Player" event)
+      (case event-type
+        "move" (handle-player-move-event event)
+        (println "No handler for event" event-type))
+
+      {:status 302})))
 
 (defn player-ws-handler [request]
   (with-channel request channel

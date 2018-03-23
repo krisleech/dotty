@@ -3,7 +3,6 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
-    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <!-- <script src="https://code.jquery.com/jquery&#45;3.3.1.min.js" integrity="sha256&#45;FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
     <script src="/jquery-3.3.1.min.js"></script>
     <style>
@@ -26,6 +25,43 @@ socket.addEventListener('open', function(event) {
   console.log('got open', event);
 });
 
+findPlayer = function(playerId) {
+  return $('#' + playerId);
+}
+
+handleMovePlayerEvent = function(event) {
+  var player = findPlayer(event["player-id"]);
+
+  switch(event.direction) {
+    case "up":
+      // needs to go in a player object
+      nowTop = parseInt(player.css('top'), 10);
+      newTop = nowTop - 10;
+      player.css('top', newTop + 'px');
+    break;
+    case "down":
+      // needs to go in a player object
+      nowTop = parseInt(player.css('top'), 10);
+      newTop = nowTop + 10;
+      player.css('top', newTop + 'px');
+    break;
+    case "left":
+      // needs to go in a player object
+      nowLeft = parseInt(player.css('left'), 10);
+      newLeft = nowLeft - 10;
+      player.css('left', newLeft + 'px');
+    break;
+    case "right":
+      // needs to go in a player object
+      nowLeft = parseInt(player.css('left'), 10);
+      newLeft = nowLeft + 10;
+      player.css('left', newLeft + 'px');
+    break;
+    default:
+      console.log("unknown direction", event.direction);
+  }
+}
+
 
 socket.onmessage = function(raw_event) {
   event = JSON.parse(raw_event.data);
@@ -38,8 +74,11 @@ socket.onmessage = function(raw_event) {
       $('#canvas').append("<div id='" + playerId + "' " + "class='player'></div>")
       $('#' + playerId).css({"top": event.player.x + "px", "left": event.player.y + "px"});
       break;
+    case "move":
+      handleMovePlayerEvent(event);
+      break;
     default:
-      console.log("Unknown event type", eventName)
+      console.log("Unknown event type", event.type)
   }
 
 };
