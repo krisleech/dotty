@@ -4,7 +4,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <!-- <script src="https://code.jquery.com/jquery&#45;3.3.1.min.js" integrity="sha256&#45;FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
+    <script src="/jquery-3.3.1.min.js"></script>
     <style>
       .player { position: relative; height: 30px; width: 30px; background-color: red; }
       #canvas { background-color: grey; width:1000px; height: 1000px; }
@@ -12,7 +13,7 @@
   </head>
   <body>
     <div>
-      To join this game visit http://localhost:3000 with your mobile phone.
+      To join this game visit http://localhost:3000/join with your mobile phone.
     </div>
 
     <div id="canvas"></div>
@@ -33,6 +34,7 @@ socket.onmessage = function(raw_event) {
     case "new-player":
       playerId = event.player.id;
       console.log('New Player', playerId)
+      // move below to functions, or maybe object.
       $('#canvas').append("<div id='" + playerId + "' " + "class='player'></div>")
       $('#' + playerId).css({"top": event.player.x + "px", "left": event.player.y + "px"});
       break;

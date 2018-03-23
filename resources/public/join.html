@@ -4,16 +4,24 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="/jquery-3.3.1.min.js"></script>
   </head>
   <body>
     <h1>Controls</h1>
     <div>
     </div>
 
-    <div id="canvas"></div>
+    <div id="controls">
+      <a href="#" id="up" class="control">Up</a>
+      <a href="#" id="right" class="control">Right</a>
+      <a href="#" id="down" class="control">Down</a>
+      <a href="#" id="left" class="control">Left</a>
+    </div>
   </body>
   <script type="text/javascript">
 
+$('#up').click(function() {
+})
 
 var socket = new WebSocket('ws://localhost:3000/ws/player');
 
