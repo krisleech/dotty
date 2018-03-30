@@ -12,14 +12,25 @@
   </head>
   <body>
     <div>
-      To join this game visit http://localhost:3000/join with your mobile phone.
+      To join this game visit http://<span id="host"></span>/join with your mobile phone.
     </div>
 
     <div id="canvas"></div>
   </body>
   <script type="text/javascript">
 
-var socket = new WebSocket('ws://localhost:3000/ws/display');
+$('#host').html(window.location.host);
+
+// var lastEventSent
+var socket = new WebSocket('ws://' + window.location.host + '/ws/display');
+
+socket.onerror = function(error) {
+  console.log('WebSocket Error: ' + error);
+};
+
+// socket.on('close', function(reasonCode, description) {
+//   console.log('Websocket Closed: ', reasonCode, description);
+// });
 
 socket.addEventListener('open', function(event) {
   console.log('got open', event);
