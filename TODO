@@ -1,7 +1,5 @@
 Automatic reload of code
 
-holding control should send multiple events - nope.
-
 Handle display screen reloading, i.e. when display connects if there are any players send them all.
 ^ will not work, we don't know their x,y... (unless we keep sending it back to the server for this purpose.)
 
@@ -16,3 +14,35 @@ However apache will not be able to see inside jar, so instead http-kit can serve
 
 
 display should report its size to server so it can set world size (used for rand x,y of new players)
+
+namespace game (join + display) so we can have multiple games
+
+## Tag game
+
+store player object(s) 
+  top/left (x,y), top/right, bottom/left, botton/right
+
+prevent player going out of bounds
+  do not move if x is less than 0 or x is greater than (boundary - player width)
+  same for y
+
+player continues to move in same direction until another button pressed
+  needs game loop, called every X seconds which will move player in current direction
+
+when more than one player joined randomly choose "it"
+
+add points (increase while not "it")
+decrease points while "it" until zero
+points done on server side and pushed to mobile devices
+
+detect collision between players
+  it x,y is within another players x,y + height/width (i.e bounding box)
+  collision with "it" changes "it" to other player
+push points to mobile device
+
+game lasts for X mins, player with most points at end wins.
+
+
+
+
+
