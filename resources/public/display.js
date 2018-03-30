@@ -49,7 +49,38 @@ handleMovePlayerEvent = function(event) {
 var createPlayer = function(attributes) {
     playerSprite = $("<div id='" + attributes.id + "' " + "class='player'><i class='fas fa-2x fa-bug'></i></div>")
     playerSprite.css({"top": attributes.x + "px", "left": attributes.y + "px"});
-    return { id: attributes.id, x: attributes.x, y: attributes.y, sprite: playerSprite, direction: 'stopped' };
+    player = { id: attributes.id, x: attributes.x, y: attributes.y, sprite: playerSprite, direction: 'stopped' };
+    player.move = function() {
+        switch(this.direction) {
+            case "stopped":
+                break;
+            case "up":
+                nowTop = parseInt(this.sprite.css('top'), 10);
+                if(nowTop < 0) { this.direction = 'stopped'; break; }
+                newTop = nowTop - pixelsToMovePerTick;
+                this.sprite.css('top', newTop + 'px');
+                break;
+            case "down":
+                nowTop = parseInt(this.sprite.css('top'), 10);
+                if(nowTop > 1000) {  this.direction = 'stopped'; break; }
+                newTop = nowTop + pixelsToMovePerTick;
+                this.sprite.css('top', newTop + 'px');
+                break;
+            case "left":
+                nowLeft = parseInt(this.sprite.css('left'), 10);
+                if(nowLeft < 0) {  this.direction = 'stopped'; break; }
+                newLeft = nowLeft - pixelsToMovePerTick;
+                this.sprite.css('left', newLeft + 'px');
+                break;
+            case "right":
+                nowLeft = parseInt(this.sprite.css('left'), 10);
+                if(nowLeft > 1000) { this.direction = 'stopped'; break; }
+                newLeft = nowLeft + pixelsToMovePerTick;
+                this.sprite.css('left', newLeft + 'px');
+                break;
+        }
+    }
+    return player;
 }
 
 socket.onmessage = function(raw_event) {
@@ -91,38 +122,7 @@ var pixelsToMovePerTick = 5;
 // update state
 function update(progress) {
     players.forEach(function(player) {
-        switch(player.direction) {
-            case "stopped":
-                break;
-            case "up":
-                // needs to go in a player object
-                nowTop = parseInt(player.sprite.css('top'), 10);
-                if(nowTop < 0) { player.direction = 'stopped'; break; }
-                newTop = nowTop - pixelsToMovePerTick;
-                player.sprite.css('top', newTop + 'px');
-                break;
-            case "down":
-                // needs to go in a player object
-                nowTop = parseInt(player.sprite.css('top'), 10);
-                if(nowTop > 1000) {  player.direction = 'stopped'; break; }
-                newTop = nowTop + pixelsToMovePerTick;
-                player.sprite.css('top', newTop + 'px');
-                break;
-            case "left":
-                // needs to go in a player object
-                nowLeft = parseInt(player.sprite.css('left'), 10);
-                if(nowLeft < 0) {  player.direction = 'stopped'; break; }
-                newLeft = nowLeft - pixelsToMovePerTick;
-                player.sprite.css('left', newLeft + 'px');
-                break;
-            case "right":
-                // needs to go in a player object
-                nowLeft = parseInt(player.sprite.css('left'), 10);
-                if(nowLeft > 1000) { player.direction = 'stopped'; break; }
-                newLeft = nowLeft + pixelsToMovePerTick;
-                player.sprite.css('left', newLeft + 'px');
-                break;
-        }
+        player.move();
     }); // player each
 
 
