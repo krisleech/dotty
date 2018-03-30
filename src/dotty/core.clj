@@ -4,6 +4,7 @@
             [clojure.data.json :as json]
             [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
             [ring.middleware.resource :refer [wrap-resource]]
+            [ring.middleware.reload :as reload]
             [ring.util.response :refer [resource-response]]
             [clojure.java.io :as io])
   (:gen-class))
@@ -101,6 +102,8 @@
 
 (def all-routes (routes websocket-routes http-routes))
 
+(defonce in-dev? true) ;; FIXME, read env var
+
 (def app
   (-> all-routes
       (wrap-defaults (assoc-in site-defaults [:security :anti-forgery] false))
@@ -108,6 +111,8 @@
 
 (defn -main
   [& args]
-  (do
-    (println "Starting Server on port 3000")
-    (server/run-server app {:port 3000})))
+  (let [handler (if in-dev? (reload/wrap-reload #'app) app)]
+    (do
+      (println "Starting Server on port 3000")
+      (when in-dev? (println "Development Environment"))
+      (server/run-server handler {:port 3000}))))

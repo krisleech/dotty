@@ -7,6 +7,7 @@
                  [compojure "1.5.1"]
                  [http-kit "2.2.0"]
                  [ring/ring-defaults "0.3.1"]
+                 [ring/ring-devel "1.6.3"]
                  [org.clojure/data.json "0.2.6"]]
 
   :main ^:skip-aot dotty.core

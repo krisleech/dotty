@@ -1,5 +1,3 @@
-Automatic reload of code
-
 Handle display screen reloading, i.e. when display connects if there are any players send them all.
 ^ will not work, we don't know their x,y... (unless we keep sending it back to the server for this purpose.)
 
