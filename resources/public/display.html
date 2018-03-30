@@ -51,37 +51,20 @@ findPlayer = function(playerId) {
 handleMovePlayerEvent = function(event) {
   var player = findPlayer(event["player-id"]);
 
-  // check if will be out of bounds
+  // TODO: animate player
 
   switch(event.direction) {
     case "up":
-      // needs to go in a player object
-      nowTop = parseInt(player.css('top'), 10);
-      if(nowTop < 0) { console.log('OOB', nowTop); break; }
-      newTop = nowTop - 10;
-      player.css('top', newTop + 'px');
-      // TODO: animate player
+      player.data('direction', 'up')
     break;
     case "down":
-      // needs to go in a player object
-      nowTop = parseInt(player.css('top'), 10);
-      if(nowTop > 1000) { console.log('OOB', nowTop); break; }
-      newTop = nowTop + 10;
-      player.css('top', newTop + 'px');
+      player.data('direction', 'down')
     break;
     case "left":
-      // needs to go in a player object
-      nowLeft = parseInt(player.css('left'), 10);
-      if(nowLeft < 0) { console.log('OOB', nowLeft); break; }
-      newLeft = nowLeft - 10;
-      player.css('left', newLeft + 'px');
+      player.data('direction', 'left')
     break;
     case "right":
-      // needs to go in a player object
-      nowLeft = parseInt(player.css('left'), 10);
-      if(nowLeft > 1000) { console.log('OOB', nowLeft); break; }
-      newLeft = nowLeft + 10;
-      player.css('left', newLeft + 'px');
+      player.data('direction', 'right')
     break;
     default:
       console.log("unknown direction", event.direction);
@@ -122,6 +105,65 @@ var sendPing = function() {
 }
 
  setInterval(sendPing, 10000);
-  </script>
+
+ // update state
+ function update(progress) {
+   $('.player').each(function(i, player) {
+     player = $(player);
+     direction = player.data("direction");
+     console.log('moving', player.attr('id'), direction)
+     switch(direction) {
+       case "up":
+         // needs to go in a player object
+         nowTop = parseInt(player.css('top'), 10);
+         if(nowTop < 0) {  break; }
+         newTop = nowTop - 10;
+         player.css('top', newTop + 'px');
+         break;
+       case "down":
+         // needs to go in a player object
+         nowTop = parseInt(player.css('top'), 10);
+         if(nowTop > 1000) {  break; }
+         newTop = nowTop + 10;
+         player.css('top', newTop + 'px');
+         break;
+       case "left":
+         // needs to go in a player object
+         nowLeft = parseInt(player.css('left'), 10);
+         if(nowLeft < 0) {  break; }
+         newLeft = nowLeft - 10;
+         player.css('left', newLeft + 'px');
+         break;
+       case "right":
+         // needs to go in a player object
+         nowLeft = parseInt(player.css('left'), 10);
+         if(nowLeft > 1000) { break; }
+         newLeft = nowLeft + 10;
+         player.css('left', newLeft + 'px');
+         break;
+     }
+   }); // player each
+
+
+}
+
+function draw() {
+  // Draw the state of the world
+}
+
+function loop(timestamp) {
+  var progress = timestamp - lastRender
+
+  update(progress)
+  draw()
+
+  lastRender = timestamp
+  window.requestAnimationFrame(loop)
+}
+
+var lastRender = 0
+window.requestAnimationFrame(loop)
+
+</script>
 
 </html>
