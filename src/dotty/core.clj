@@ -58,7 +58,7 @@
     (println "-> display" event)
     (send! @display-channel (json/write-str event))))
 
-(defn new-player [] {:id (uuid) :x (rand-int 1000) :y (rand-int 1000)})
+(defn new-player [] {:id (uuid) :x (rand-int 200) :y (rand-int 200)})
 
 
 (defn player-connect! [channel]

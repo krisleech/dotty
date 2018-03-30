@@ -5,9 +5,17 @@
     <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
     <!-- <script src="https://code.jquery.com/jquery&#45;3.3.1.min.js" integrity="sha256&#45;FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script> -->
     <script src="/jquery-3.3.1.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
     <style>
-      .player { position: relative; height: 30px; width: 30px; background-color: red; }
+      .player { position: relative; height: 30px; width: 30px; background-color: #74fc55;
+        color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+border-radius: 50%; border: 2px solid #378227;
+      }
       #canvas { background-color: grey; width:1000px; height: 1000px; }
+
     </style>
   </head>
   <body>
@@ -43,28 +51,35 @@ findPlayer = function(playerId) {
 handleMovePlayerEvent = function(event) {
   var player = findPlayer(event["player-id"]);
 
+  // check if will be out of bounds
+
   switch(event.direction) {
     case "up":
       // needs to go in a player object
       nowTop = parseInt(player.css('top'), 10);
+      if(nowTop < 0) { console.log('OOB', nowTop); break; }
       newTop = nowTop - 10;
       player.css('top', newTop + 'px');
+      // TODO: animate player
     break;
     case "down":
       // needs to go in a player object
       nowTop = parseInt(player.css('top'), 10);
+      if(nowTop > 1000) { console.log('OOB', nowTop); break; }
       newTop = nowTop + 10;
       player.css('top', newTop + 'px');
     break;
     case "left":
       // needs to go in a player object
       nowLeft = parseInt(player.css('left'), 10);
+      if(nowLeft < 0) { console.log('OOB', nowLeft); break; }
       newLeft = nowLeft - 10;
       player.css('left', newLeft + 'px');
     break;
     case "right":
       // needs to go in a player object
       nowLeft = parseInt(player.css('left'), 10);
+      if(nowLeft > 1000) { console.log('OOB', nowLeft); break; }
       newLeft = nowLeft + 10;
       player.css('left', newLeft + 'px');
     break;
@@ -82,7 +97,7 @@ socket.onmessage = function(raw_event) {
       playerId = event.player.id;
       console.log('New Player', playerId)
       // move below to functions, or maybe object.
-      $('#canvas').append("<div id='" + playerId + "' " + "class='player'></div>")
+        $('#canvas').append("<div id='" + playerId + "' " + "class='player'><i class='fas fa-2x fa-bug'></i></div>")
       $('#' + playerId).css({"top": event.player.x + "px", "left": event.player.y + "px"});
       break;
     case "move":
