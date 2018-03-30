@@ -98,9 +98,15 @@ socket.onmessage = function(raw_event) {
 var socketPush  = function(message) {
   if (socket.readyState === WebSocket.OPEN) {
     console.log('sending msg', message);
-    socket.send(message);
+    socket.send(JSON.stringify(message));
   }
 };
+
+var sendPing = function() {
+  socketPush({ "type": "ping" })
+}
+
+ setInterval(sendPing, 10000);
   </script>
 
 </html>
