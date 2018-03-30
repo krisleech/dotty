@@ -30,7 +30,7 @@
 
 (defn process-display-new-message [raw_msg]
   (let [player (json/read-str raw_msg :key-fn keyword)]
-    (println "Get new message" raw_msg)
+    (println "Got new message" raw_msg)
     {:status 302}))
 
 (defonce display-channel (atom nil))
