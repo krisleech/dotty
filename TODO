@@ -17,16 +17,6 @@ namespace game (join + display) so we can have multiple games
 
 ## Tag game
 
-store player object(s) 
-  top/left (x,y), top/right, bottom/left, botton/right
-
-prevent player going out of bounds
-  do not move if x is less than 0 or x is greater than (boundary - player width)
-  same for y
-
-player continues to move in same direction until another button pressed
-  needs game loop, called every X seconds which will move player in current direction
-
 when more than one player joined randomly choose "it"
 
 add points (increase while not "it")
