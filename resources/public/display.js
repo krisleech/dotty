@@ -55,28 +55,24 @@ var createPlayer = function(attributes) {
             case "stopped":
                 break;
             case "up":
-                nowTop = parseInt(this.sprite.css('top'), 10);
-                if(nowTop < 0) { this.direction = 'stopped'; break; }
-                newTop = nowTop - pixelsToMovePerTick;
-                this.sprite.css('top', newTop + 'px');
+                if(this.x < 0) { this.direction = 'stopped'; break; }
+                this.x = this.x - pixelsToMovePerTick;
+                this.sprite.css('top', this.x + 'px');
                 break;
             case "down":
-                nowTop = parseInt(this.sprite.css('top'), 10);
-                if(nowTop > 1000) {  this.direction = 'stopped'; break; }
-                newTop = nowTop + pixelsToMovePerTick;
-                this.sprite.css('top', newTop + 'px');
+                if(this.x > 1000) { this.direction = 'stopped'; break; }
+                this.x = this.x + pixelsToMovePerTick;
+                this.sprite.css('top', this.x + 'px');
                 break;
             case "left":
-                nowLeft = parseInt(this.sprite.css('left'), 10);
-                if(nowLeft < 0) {  this.direction = 'stopped'; break; }
-                newLeft = nowLeft - pixelsToMovePerTick;
-                this.sprite.css('left', newLeft + 'px');
+                if(this.y < 0) {  this.direction = 'stopped'; break; }
+                this.y = this.y - pixelsToMovePerTick;
+                this.sprite.css('left', this.y + 'px');
                 break;
             case "right":
-                nowLeft = parseInt(this.sprite.css('left'), 10);
-                if(nowLeft > 1000) { this.direction = 'stopped'; break; }
-                newLeft = nowLeft + pixelsToMovePerTick;
-                this.sprite.css('left', newLeft + 'px');
+                if(this.y > 1000) { this.direction = 'stopped'; break; }
+                this.y = this.y + pixelsToMovePerTick;
+                this.sprite.css('left', this.y + 'px');
                 break;
         }
     }
