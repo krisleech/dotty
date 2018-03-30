@@ -46,10 +46,18 @@ handleMovePlayerEvent = function(event) {
     }
 }
 
+// speed of players
+var pixelsToMovePerTick = 5;
+
 var createPlayer = function(attributes) {
     playerSprite = $("<div id='" + attributes.id + "' " + "class='player'><i class='fas fa-2x fa-bug'></i></div>")
     playerSprite.css({"top": attributes.x + "px", "left": attributes.y + "px"});
     player = { id: attributes.id, x: attributes.x, y: attributes.y, sprite: playerSprite, direction: 'stopped' };
+
+    player.render = function() {
+        this.sprite.css({ 'top': this.x + 'px', 'left': this.y + 'px' });
+    }
+
     player.move = function() {
         switch(this.direction) {
             case "stopped":
@@ -57,22 +65,18 @@ var createPlayer = function(attributes) {
             case "up":
                 if(this.x < 0) { this.direction = 'stopped'; break; }
                 this.x = this.x - pixelsToMovePerTick;
-                this.sprite.css('top', this.x + 'px');
                 break;
             case "down":
                 if(this.x > 1000) { this.direction = 'stopped'; break; }
                 this.x = this.x + pixelsToMovePerTick;
-                this.sprite.css('top', this.x + 'px');
                 break;
             case "left":
                 if(this.y < 0) {  this.direction = 'stopped'; break; }
                 this.y = this.y - pixelsToMovePerTick;
-                this.sprite.css('left', this.y + 'px');
                 break;
             case "right":
                 if(this.y > 1000) { this.direction = 'stopped'; break; }
                 this.y = this.y + pixelsToMovePerTick;
-                this.sprite.css('left', this.y + 'px');
                 break;
         }
     }
@@ -86,7 +90,9 @@ socket.onmessage = function(raw_event) {
         case "new-player":
             player = createPlayer(event.player);
             players.push(player);
+            player.sprite.hide();
             $('#canvas').append(player.sprite)
+            player.sprite.fadeIn();
             console.log('New Player', player)
             break;
         case "move":
@@ -112,16 +118,12 @@ var sendPing = function() {
 
 setInterval(sendPing, 10000);
 
-// speed of players
-var pixelsToMovePerTick = 5;
-
 // update state
 function update(progress) {
     players.forEach(function(player) {
         player.move();
-    }); // player each
-
-
+        player.render();
+    });
 }
 
 function draw() {
