@@ -79,7 +79,8 @@ var sendPing = function() {
 
 setInterval(sendPing, 10000);
 
-var pixelsToMovePerTick = 10;
+// speed of players
+var pixelsToMovePerTick = 5;
 
 // update state
 function update(progress) {
