@@ -2,7 +2,9 @@ $(function(){
     $('#host').html(window.location.host);
 })
 
-// var lastEventSent
+
+var players = [];
+
 var socket = new WebSocket('ws://' + window.location.host + '/ws/display');
 
 socket.onerror = function(error) {
@@ -17,8 +19,8 @@ socket.addEventListener('open', function(event) {
     console.log('got open', event);
 });
 
-findPlayer = function(playerId) {
-    return $('#' + playerId);
+var findPlayer = function(playerId) {
+    return players.find(function(player) { return player.id === playerId });
 }
 
 handleMovePlayerEvent = function(event) {
@@ -28,33 +30,37 @@ handleMovePlayerEvent = function(event) {
 
     switch(event.direction) {
         case "up":
-            player.data('direction', 'up')
+            player.direction = 'up';
             break;
         case "down":
-            player.data('direction', 'down')
+            player.direction = 'down';
             break;
         case "left":
-            player.data('direction', 'left')
+            player.direction = 'left';
             break;
         case "right":
-            player.data('direction', 'right')
+            player.direction = 'right';
             break;
         default:
             console.log("unknown direction", event.direction);
     }
 }
 
+var createPlayer = function(attributes) {
+    playerSprite = $("<div id='" + attributes.id + "' " + "class='player'><i class='fas fa-2x fa-bug'></i></div>")
+    playerSprite.css({"top": attributes.x + "px", "left": attributes.y + "px"});
+    return { id: attributes.id, x: attributes.x, y: attributes.y, sprite: playerSprite, direction: null };
+}
 
 socket.onmessage = function(raw_event) {
     event = JSON.parse(raw_event.data);
     console.log('got event', event)
     switch(event.type) {
         case "new-player":
-            playerId = event.player.id;
-            console.log('New Player', playerId)
-            // move below to functions, or maybe object.
-            $('#canvas').append("<div id='" + playerId + "' " + "class='player'><i class='fas fa-2x fa-bug'></i></div>")
-            $('#' + playerId).css({"top": event.player.x + "px", "left": event.player.y + "px"});
+            player = createPlayer(event.player);
+            players.push(player);
+            $('#canvas').append(player.sprite)
+            console.log('New Player', player)
             break;
         case "move":
             handleMovePlayerEvent(event);
@@ -84,38 +90,36 @@ var pixelsToMovePerTick = 5;
 
 // update state
 function update(progress) {
-    $('.player').each(function(i, player) {
-        player = $(player);
-        direction = player.data("direction");
-        console.log('moving', player.attr('id'), direction)
-        switch(direction) {
+    players.forEach(function(player) {
+        console.log('moving', player.id, player.direction)
+        switch(player.direction) {
             case "up":
                 // needs to go in a player object
-                nowTop = parseInt(player.css('top'), 10);
+                nowTop = parseInt(player.sprite.css('top'), 10);
                 if(nowTop < 0) {  break; }
                 newTop = nowTop - pixelsToMovePerTick;
-                player.css('top', newTop + 'px');
+                player.sprite.css('top', newTop + 'px');
                 break;
             case "down":
                 // needs to go in a player object
-                nowTop = parseInt(player.css('top'), 10);
+                nowTop = parseInt(player.sprite.css('top'), 10);
                 if(nowTop > 1000) {  break; }
                 newTop = nowTop + pixelsToMovePerTick;
-                player.css('top', newTop + 'px');
+                player.sprite.css('top', newTop + 'px');
                 break;
             case "left":
                 // needs to go in a player object
-                nowLeft = parseInt(player.css('left'), 10);
+                nowLeft = parseInt(player.sprite.css('left'), 10);
                 if(nowLeft < 0) {  break; }
                 newLeft = nowLeft - pixelsToMovePerTick;
-                player.css('left', newLeft + 'px');
+                player.sprite.css('left', newLeft + 'px');
                 break;
             case "right":
                 // needs to go in a player object
-                nowLeft = parseInt(player.css('left'), 10);
+                nowLeft = parseInt(player.sprite.css('left'), 10);
                 if(nowLeft > 1000) { break; }
                 newLeft = nowLeft + pixelsToMovePerTick;
-                player.css('left', newLeft + 'px');
+                player.sprite.css('left', newLeft + 'px');
                 break;
         }
     }); // player each
