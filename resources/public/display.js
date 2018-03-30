@@ -79,6 +79,8 @@ var sendPing = function() {
 
 setInterval(sendPing, 10000);
 
+var pixelsToMovePerTick = 10;
+
 // update state
 function update(progress) {
     $('.player').each(function(i, player) {
@@ -90,28 +92,28 @@ function update(progress) {
                 // needs to go in a player object
                 nowTop = parseInt(player.css('top'), 10);
                 if(nowTop < 0) {  break; }
-                newTop = nowTop - 10;
+                newTop = nowTop - pixelsToMovePerTick;
                 player.css('top', newTop + 'px');
                 break;
             case "down":
                 // needs to go in a player object
                 nowTop = parseInt(player.css('top'), 10);
                 if(nowTop > 1000) {  break; }
-                newTop = nowTop + 10;
+                newTop = nowTop + pixelsToMovePerTick;
                 player.css('top', newTop + 'px');
                 break;
             case "left":
                 // needs to go in a player object
                 nowLeft = parseInt(player.css('left'), 10);
                 if(nowLeft < 0) {  break; }
-                newLeft = nowLeft - 10;
+                newLeft = nowLeft - pixelsToMovePerTick;
                 player.css('left', newLeft + 'px');
                 break;
             case "right":
                 // needs to go in a player object
                 nowLeft = parseInt(player.css('left'), 10);
                 if(nowLeft > 1000) { break; }
-                newLeft = nowLeft + 10;
+                newLeft = nowLeft + pixelsToMovePerTick;
                 player.css('left', newLeft + 'px');
                 break;
         }
