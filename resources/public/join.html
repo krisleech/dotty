@@ -5,17 +5,52 @@
     <script src="//cdn.jsdelivr.net/npm/phaser@3.1.1/dist/phaser.js"></script>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="/jquery-3.3.1.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.9/js/all.js" integrity="sha384-8iPTk2s/jMVj81dnzb/iFR2sdA7u06vHJyyLlAd4snFpCl/SnyUjRrbdJsw1pGIl" crossorigin="anonymous"></script>
+<style>
+body { background-color: #5fe8c3; }
+h1 { text-align: center; }
+#controls {}
+.control:active {
+    color: #5fe8c3; 
+}
+.control { border-radius: 50%;
+  text-align: center;
+    text-decoration: none;
+      color: white;
+        display: flex;
+justify-content: center;
+align-items: center;
+  border: 2px solid #056b02;
+  height: 120px; width: 120px; background-color: #357a1e; }
+#up { margin: auto;
+       /* box-shadow: 0px 10px 10px white; */
+}
+#down { margin: auto; clear: left; clear: right;
+       /* box-shadow: 0px -10px 5px grey; */
+}
+#left { float: left;
+       /* box-shadow: 10px 0px 5px grey; */
+}
+#right { float: right; 
+       /* box-shadow: -10px 0px 5px grey; */
+}
+</style>
   </head>
   <body>
-    <h1>Controls</h1>
-    <div>
-    </div>
-
+    <h1>Tag</h1>
     <div id="controls">
-      <a href="#" id="up" class="control">Up</a>
-      <a href="#" id="right" class="control">Right</a>
-      <a href="#" id="down" class="control">Down</a>
-      <a href="#" id="left" class="control">Left</a>
+      <a href="#" id="up" class="control">
+        <i class="fas fa-arrow-up fa-7x"></i>
+      </a>
+      <a href="#" id="left" class="control">
+        <i class="fas fa-arrow-left fa-7x"></i>
+      </a>
+      <a href="#" id="right" class="control">
+        <i class="fas fa-arrow-right fa-7x"></i>
+      </a>
+      <a href="#" id="down" class="control">
+        <i class="fas fa-arrow-down fa-7x"></i>
+      </a>
     </div>
   </body>
   <script type="text/javascript">
@@ -40,7 +75,7 @@ $('#right').click(function(e) {
   sendEvent({ "type": "move", "direction": "right" });
 })
 
-var socket = new WebSocket('ws://localhost:3000/ws/player');
+var socket = new WebSocket('ws://' + window.location.host + '/ws/player');
 
 socket.addEventListener('open', function(event) {
   console.log('player got open', event);
