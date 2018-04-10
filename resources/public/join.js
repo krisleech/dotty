@@ -26,6 +26,18 @@ socket.addEventListener('open', function(event) {
     console.log('player got open', event);
 });
 
+socket.onopen = function() { joinGame(); }
+
+var joinGame = function() {
+    playerId = window.localStorage.getItem('playerId');
+
+    console.log('playerId', playerId);
+
+    if(playerId == null) {
+        sendEvent({ "type": "new-player" });
+    }
+}
+
 var playerId;
 
 socket.onmessage = function(message) {
@@ -35,7 +47,9 @@ socket.onmessage = function(message) {
     switch(event.type) {
         case "id-created":
             playerId = event.id;
-            console.log('id set', playerId)
+            window.localStorage.setItem('playerId', playerId);
+            // or $.cookies.set(key, value); (to support older clients)
+            console.log('playerId set', playerId)
             break;
         default:
             console.log("Unknown event type", event.type)

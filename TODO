@@ -17,12 +17,6 @@ to support multiple display, as at the moment it works just fine with two channe
 Handle display screen reloading, i.e. when display connects if there are any players send them all.
 ^ will not work, we don't know their x,y... (unless we keep sending it back to the server for this purpose.)
 
-Handle player screen refreshing? - store player id in cookie or local storage, but how to get server to
-use this uuid instead of creating a new player? We will have to change it so instead of sending back a uuid
-on connect it is requested and reponse is on same socket with uuid. That way client can either use existing
-uuid or ask for a new one.
-
-
 static assets are served via http-kit, this is okay for local dev, but on server Apache (or whatever) should serve these.
 they also do not have caching headers. Ideally we also add digest. But this can come later.
 However apache will not be able to see inside jar, so instead http-kit can serve and apache can cache.
