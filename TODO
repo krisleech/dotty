@@ -18,6 +18,9 @@ Or when we need to send events to a specific player.
 Handle display screen reloading, i.e. when display connects if there are any players send them all.
 ^ will not work, we don't know their x,y... (unless we keep sending it back to the server for this purpose.)
 
+Do we need to handle loosing WS connection, i.e. attempt to reconnect every X seconds? This might be especially useful
+when using a poor connection, e.g. 3G or Wifi.
+
 static assets are served via http-kit, this is okay for local dev, but on server Apache (or whatever) should serve these.
 they also do not have caching headers. Ideally we also add digest. But this can come later.
 However apache will not be able to see inside jar, so instead http-kit can serve and apache can cache.
