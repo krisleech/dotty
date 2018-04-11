@@ -6,7 +6,8 @@
             [ring.middleware.resource :refer [wrap-resource]]
             [ring.middleware.reload :as reload]
             [ring.util.response :refer [resource-response]]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [dotty.display :refer :all])
   (:gen-class))
 
 (defonce players (atom {}))
@@ -28,36 +29,6 @@
   (GET "/game" [] game-handler)
   (GET "/join" [] join-handler)
   (GET "/display" [] display-handler))
-
-(defn process-display-new-message [raw_msg]
-  (let [player (json/read-str raw_msg :key-fn keyword)]
-    (println "Got new message" raw_msg)
-    {:status 302}))
-
-(defonce display-channel (atom nil))
-
-(defn display-connect! [channel]
-  (do
-    (reset! display-channel channel)
-    (println "Display connected.")))
-
-(defn display-disconnect! [channel status]
-  (do
-    (reset! display-channel nil)
-    (println "Display Disconnected." status)))
-
-(defn display-connected? [] (not (nil? @display-channel)))
-
-(defn display-ws-handler [request]
-  (with-channel request channel
-    (display-connect! channel)
-    (on-close channel (partial display-disconnect! channel))
-    (on-receive channel process-display-new-message)))
-
-(defn send-display-event! [event]
-  (do
-    (println "-> display" event)
-    (send! @display-channel (json/write-str event))))
 
 (defn new-player [] {:id (uuid) :x (rand-int 200) :y (rand-int 200)})
 
