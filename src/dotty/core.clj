@@ -7,12 +7,10 @@
             [ring.middleware.reload :as reload]
             [ring.util.response :refer [resource-response]]
             [clojure.java.io :as io]
-            [dotty.display :refer :all])
+            [dotty.display :refer :all]
+            [dotty.player :refer :all])
   (:gen-class))
 
-(defonce players (atom {}))
-
-(defn uuid [] (str (java.util.UUID/randomUUID)))
 (defn render [body] { :status 200 :body body :headers {"Content-Type" "text/html"}})
 (defn render-json [data] { :status 200 :body (json/write-str data) :headers {"Content-Type" "text/json" "Access-Control-Allow-Origin" "*"}})
 (defn render-html-file [path] { :status 200 :body (io/input-stream (io/resource (str "public/" path))) :headers {"Content-Type" "text/html"}})
@@ -29,44 +27,6 @@
   (GET "/game" [] game-handler)
   (GET "/join" [] join-handler)
   (GET "/display" [] display-handler))
-
-(defn new-player [] {:id (uuid) :x (rand-int 200) :y (rand-int 200)})
-
-(defn player-connect! [channel]
-  (println "Player connected."))
-
-(defn player-disconnect! [channel status]
-  (do
-    (println "Player Disconnected." status)))
-
-;; send to display
-(defn handle-player-move-event [event]
-  (send-display-event! event))
-
-(defn handle-new-player [channel event]
-  (let [new-player (new-player)
-        player-id (:id new-player)]
-    (swap! players assoc player-id new-player)
-    (send! channel (json/write-str { :type "id-created" :id player-id}))
-    (send-display-event! { :type "new-player" :player new-player})))
-
-(defn process-player-new-message [channel message]
-  (let [event (json/read-str message :key-fn keyword)
-        event-type (:type event)]
-    (do
-      (println "<- Player" event)
-      (case event-type
-        "move" (handle-player-move-event event)
-        "new-player" (handle-new-player channel event)
-        (println "No handler for event" event-type))
-
-      {:status 302})))
-
-(defn player-ws-handler [request]
-  (with-channel request channel
-    (player-connect! channel)
-    (on-close channel (partial player-disconnect! channel))
-    (on-receive channel (partial process-player-new-message channel))))
 
 (defroutes websocket-routes
   (GET "/ws/display" request (display-ws-handler request))
