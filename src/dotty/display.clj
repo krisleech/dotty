@@ -25,10 +25,3 @@
     (display-connect! channel)
     (on-close channel (partial display-disconnect! channel))
     (on-receive channel process-display-new-message)))
-
-(defn send-display-event! [event]
-  (do
-    (println "-> display" event)
-    (ws/send-event! :display event)))
-
-

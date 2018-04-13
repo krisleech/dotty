@@ -2,12 +2,10 @@
   (:require [org.httpkit.server :as server :refer [send! with-channel on-close on-receive]]
             [clojure.data.json :as json]
             [dotty.ws :as ws]
-            [dotty.display :refer [send-display-event!]])
+            [dotty.utils :refer [uuid]])
   (:gen-class))
 
 (defonce players (atom {}))
-
-(defn uuid [] (str (java.util.UUID/randomUUID)))
 
 (defn new-player [] {:id (uuid) :x (rand-int 200) :y (rand-int 200)})
 
@@ -18,7 +16,7 @@
   (println "Player Disconnected." status))
 
 (defn handle-player-move-event [event]
-  (send-display-event! event))
+  (ws/send-event! :display event))
 
 (defn handle-new-player [channel event]
   (let [new-player (new-player)
@@ -26,7 +24,7 @@
     (swap! players assoc player-id new-player)
     (ws/register-channel! player-id :player channel)
     (ws/send-event! player-id { :type "id-created" :id player-id})
-    (send-display-event! { :type "new-player" :player new-player})))
+    (ws/send-event! :display { :type "new-player" :player new-player})))
 
 (defn handle-returning-player [channel event]
   (let [player-id (:player-id event)]

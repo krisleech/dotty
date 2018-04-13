@@ -20,17 +20,15 @@
   "returns channels for given tag"
   (map last (filter #(= tag (second %)) @channels)))
 
+(defn send-to! [channel event]
+  (send! channel (json/write-str event)))
+
 (defn send-event-by-id [id event]
-  (send! (find-by-id id) (json/write-str event)))
+  (send-to! (find-by-id id) event))
 
 (defn send-event-by-tag [tag event]
   (doseq [channel (find-by-tag tag)]
-    (send! channel (json/write-str event))))
-
-;; (defn send-event! [id-or-tag event]
-;;   (case (type id-or-tag)
-;;     java.lang.String (send-event-by-id id-or-tag event)
-;;     clojure.lang.Keyword (send-event-by-tag id-or-tag event)))
+    (send-to! channel event)))
 
 (defn send-event! [id-or-tag event]
   (condp = (class id-or-tag)
