@@ -1,5 +1,5 @@
 (ns dotty.ws
-  (:require [org.httpkit.server :refer [send!] :rename {send! send-message!}]
+  (:require [org.httpkit.server :refer [send!]]
             [clojure.data.json :as json])
   (:gen-class))
 
@@ -13,22 +13,25 @@
     (reset! channels with-id)))
 
 (defn find-by-id [id]
-  (first (filter #(= id (first %)) @channels)))
+  "returns channel for given id"
+  (last (first (filter #(= id (first %)) @channels))))
 
 (defn find-by-tag [tag]
-  (filter #(= tag (second %)) @channels))
-
-(defn send! [channel event]
-  (send-message! channel (json/write-str event)))
+  "returns channels for given tag"
+  (map last (filter #(= tag (second %)) @channels)))
 
 (defn send-event-by-id [id event]
-  (send! (find-by-id id) event))
+  (send! (find-by-id id) (json/write-str event)))
 
 (defn send-event-by-tag [tag event]
   (doseq [channel (find-by-tag tag)]
-    (send! channel event)))
+    (send! channel (json/write-str event))))
+
+;; (defn send-event! [id-or-tag event]
+;;   (case (type id-or-tag)
+;;     java.lang.String (send-event-by-id id-or-tag event)
+;;     clojure.lang.Keyword (send-event-by-tag id-or-tag event)))
 
 (defn send-event! [id-or-tag event]
-  (case (class id-or-tag)
-    java.lang.String (send-event-by-id id-or-tag event)
-    clojure.lang.Keyword (send-event-by-tag id-or-tag event)))
+  (condp = (class id-or-tag)
+    java.lang.String (send-event-by-id id-or-tag event)))

@@ -30,7 +30,7 @@
         player-id (:id new-player)]
     (swap! players assoc player-id new-player)
     (ws/register-channel! player-id :player channel)
-    (send! channel (json/write-str { :type "id-created" :id player-id}))
+    (ws/send-event! player-id { :type "id-created" :id player-id})
     (send-display-event! { :type "new-player" :player new-player})))
 
 (defn handle-returning-player [channel event]
