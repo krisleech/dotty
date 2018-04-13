@@ -8,6 +8,7 @@
             [ring.util.response :refer [resource-response]]
             [clojure.java.io :as io]
             [dotty.display :refer :all]
+            [dotty.ws :as ws]
             [dotty.player :refer :all])
   (:gen-class))
 
@@ -16,7 +17,7 @@
 (defn render-html-file [path] { :status 200 :body (io/input-stream (io/resource (str "public/" path))) :headers {"Content-Type" "text/html"}})
 
 (defn homepage-handler [r] (render-html-file "index.html"))
-(defn debug-handler [r] (render-json {:players @players}))
+(defn debug-handler [r] (render-json {:players @players :channels (map #(str %) @ws/channels)}))
 (defn game-handler [r] (render "GAME"))
 (defn join-handler [r] (render-html-file "join.html"))
 (defn display-handler [r] (render-html-file "display.html"))

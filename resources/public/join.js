@@ -20,25 +20,27 @@ $(function(){
     })
 })
 
+var playerId = window.localStorage.getItem('playerId');
+
+console.log("playerId", playerId);
+
 var socket = new WebSocket('ws://' + window.location.host + '/ws/player');
 
-socket.addEventListener('open', function(event) {
-    console.log('player got open', event);
-});
+// socket.addEventListener('open', function(event) {
+//     console.log('connection opened', event);
+// });
 
 socket.onopen = function() { joinGame(); }
 
 var joinGame = function() {
-    playerId = window.localStorage.getItem('playerId');
-
-    console.log('playerId', playerId);
-
     if(playerId == null) {
         sendEvent({ "type": "new-player" });
     }
+    else
+    {
+        sendEvent({ "type": "returning-player" })
+    }
 }
-
-var playerId;
 
 socket.onmessage = function(message) {
     event = JSON.parse(message.data);

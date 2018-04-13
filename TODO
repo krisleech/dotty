@@ -8,7 +8,7 @@ add timbre logging lib
 
 tea-time scheduler to spawn new objects, e.g. coins
 
-store sockets in atom with tag (e.g. player or display) and id. So we can send messages
+[WIP] store sockets in atom with tag (e.g. player or display) and id. So we can send messages
 to a socket, or multiple sockets with the same tag in a generic way. This would be most useful if we wanted
 to support multiple display, as at the moment it works just fine with two channels (player and display).
 Or when we need to send events to a specific player.
