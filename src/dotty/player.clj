@@ -15,16 +15,11 @@
   (println "Player connected." (get (:headers request) "sec-websocket-key")))
 
 (defn player-disconnect! [channel status]
-  (do
-    (println "Player Disconnected." status)))
+  (println "Player Disconnected." status))
 
-;; send to display
-;; here it helps to get JSON as we can proxy the raw event for better performance.
-;; maybe we can have a seperate send-raw-event! function elsewhere.
 (defn handle-player-move-event [event]
   (send-display-event! event))
 
-;; FIXME: should not have to write JSON, just pass a map.
 (defn handle-new-player [channel event]
   (let [new-player (new-player)
         player-id (:id new-player)]

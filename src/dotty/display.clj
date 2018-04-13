@@ -1,6 +1,8 @@
 (ns dotty.display
   (:require [org.httpkit.server :as server :refer [send! with-channel on-close on-receive]]
-            [clojure.data.json :as json])
+            [clojure.data.json :as json]
+            [dotty.ws :as ws]
+            [dotty.utils :refer [uuid]])
   (:gen-class))
 
 ;; FIXME: should not need to deal with JSON at this level, do this earlier in core.
@@ -9,19 +11,14 @@
     (println "Got new message" raw_msg)
     {:status 302}))
 
-(defonce display-channel (atom nil))
-
+;; random id for now
 (defn display-connect! [channel]
-  (do
-    (reset! display-channel channel)
+  (let [display-id (uuid)]
+    (ws/register-channel! display-id :display channel)
     (println "Display connected.")))
 
 (defn display-disconnect! [channel status]
-  (do
-    (reset! display-channel nil)
-    (println "Display Disconnected." status)))
-
-(defn display-connected? [] (not (nil? @display-channel)))
+  (println "Display Disconnected." status))
 
 (defn display-ws-handler [request]
   (with-channel request channel
@@ -32,6 +29,6 @@
 (defn send-display-event! [event]
   (do
     (println "-> display" event)
-    (send! @display-channel (json/write-str event))))
+    (ws/send-event! :display event)))
 
 

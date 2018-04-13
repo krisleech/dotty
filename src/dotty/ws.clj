@@ -34,4 +34,5 @@
 
 (defn send-event! [id-or-tag event]
   (condp = (class id-or-tag)
-    java.lang.String (send-event-by-id id-or-tag event)))
+    java.lang.String (send-event-by-id id-or-tag event)
+    clojure.lang.Keyword (send-event-by-tag id-or-tag event)))
