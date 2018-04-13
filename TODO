@@ -1,7 +1,5 @@
 read in-dev? from ENV var (maybe environ)
 
-split everything in to namespaces.
-
 replace atoms with agents (async)
 
 multimethods to replace case statements to dispatch event to handler functions.
@@ -14,6 +12,8 @@ store sockets in atom with tag (e.g. player or display) and id. So we can send m
 to a socket, or multiple sockets with the same tag in a generic way. This would be most useful if we wanted
 to support multiple display, as at the moment it works just fine with two channels (player and display).
 Or when we need to send events to a specific player.
+^ this will mean display and player namespaces will not need to deal with JSON (apart from player movement handler
+which proxies the raw unparsed JSON event to the display.)
 
 Handle display screen reloading, i.e. when display connects if there are any players send them all.
 ^ will not work, we don't know their x,y... (unless we keep sending it back to the server for this purpose.)
