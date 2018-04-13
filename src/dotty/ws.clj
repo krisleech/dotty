@@ -13,18 +13,21 @@
     (reset! channels with-id)))
 
 (defn find-by-id [id]
-  "returns channel for given id"
-  (last (first (filter #(= id (first %)) @channels))))
+  "returns channel tuple for given id"
+  (first (filter #(= id (first %)) @channels)))
 
 (defn find-by-tag [tag]
-  "returns channels for given tag"
-  (map last (filter #(= tag (second %)) @channels)))
+  "returns collection of channel tuples for given tag"
+  (filter #(= tag (second %)) @channels))
 
 (defn send-to! [channel event]
-  (send! channel (json/write-str event)))
+  (do
+    (println "->" (second channel) (first channel) event)
+    (send! (last channel) (json/write-str event))))
 
 (defn send-event-by-id [id event]
-  (send-to! (find-by-id id) event))
+  (let [channel (find-by-id id)]
+    (send-to! channel event)))
 
 (defn send-event-by-tag [tag event]
   (doseq [channel (find-by-tag tag)]
