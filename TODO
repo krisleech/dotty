@@ -8,15 +8,13 @@ add timbre logging lib
 
 tea-time scheduler to spawn new objects, e.g. coins
 
-[WIP] store sockets in atom with tag (e.g. player or display) and id. So we can send messages
-to a socket, or multiple sockets with the same tag in a generic way. This would be most useful if we wanted
-to support multiple display, as at the moment it works just fine with two channels (player and display).
-Or when we need to send events to a specific player.
-^ this will mean display and player namespaces will not need to deal with JSON (apart from player movement handler
-which proxies the raw unparsed JSON event to the display.)
+Have a way to proxy an event from player to display without having to parse and pack as JSON.
+We need to parse to know the event type. But we could forward the raw JSON string with a new function "send-message!"
+Or we could have a seperate channel which just proxies events without inspection of payload.
 
 Handle display screen reloading, i.e. when display connects if there are any players send them all.
 ^ will not work, we don't know their x,y... (unless we keep sending it back to the server for this purpose.)
+- same goes for multiple displays, they need corrections from the primary display to bring them back inline.
 
 Do we need to handle loosing WS connection, i.e. attempt to reconnect every X seconds? This might be especially useful
 when using a poor connection, e.g. 3G or Wifi.
@@ -25,11 +23,14 @@ static assets are served via http-kit, this is okay for local dev, but on server
 they also do not have caching headers. Ideally we also add digest. But this can come later.
 However apache will not be able to see inside jar, so instead http-kit can serve and apache can cache.
 
-
-
-display should report its size to server so it can set world size (used for rand x,y of new players)
+display should report its screen size/resolution to server so it can set world size (used for rand x,y of new players)
 
 namespace game (join + display) so we can have multiple games
+-  game-configurations: [ { :id "tag" :event-handler tag/event-handler } ]
+- active-games: [ { :id "123" :config-id "tag" } ]
+- players <- do not need to be segrgated by game since they have unique id's.
+
+-on event received, inspect URL as it will contain the game-id, look up game to get handler and pass event to handler.
 
 ## Tag game
 
