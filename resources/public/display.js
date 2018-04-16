@@ -100,7 +100,7 @@ var handleNewPlayer = function(event) {
         console.log('Choosing IT');
         random_player = players[Math.floor(Math.random()*players.length)];
         random_player.becomeIt();
-        socketPush({ "type": "it-changed", "playerId": random_player.id })
+        socketPush({ "type": "it-changed", "player-id": random_player.id })
     }
 }
 

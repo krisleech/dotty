@@ -34,8 +34,6 @@ namespace game (join + display) so we can have multiple games
 
 ## Tag game
 
-when more than one player joined randomly choose "it"
-
 add points (increase while not "it")
 decrease points while "it" until zero
 points done on server side and pushed to mobile devices

@@ -53,6 +53,9 @@ socket.onmessage = function(message) {
             // or $.cookies.set(key, value); (to support older clients)
             console.log('playerId set', playerId)
             break;
+        case "you-are-it":
+            $('body').css('background-color', 'red');
+            break;
         default:
             console.log("Unknown event type", event.type)
     }
