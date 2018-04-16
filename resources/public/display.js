@@ -3,6 +3,7 @@ $(function(){
 })
 
 
+var world = { itPlayerId: null };
 var players = [];
 
 var socket = new WebSocket('ws://' + window.location.host + '/ws/display');
@@ -52,10 +53,15 @@ var pixelsToMovePerTick = 5;
 var createPlayer = function(attributes) {
     playerSprite = $("<div id='" + attributes.id + "' " + "class='player'><i class='fas fa-2x fa-bug'></i></div>")
     playerSprite.css({"top": attributes.x + "px", "left": attributes.y + "px"});
-    player = { id: attributes.id, x: attributes.x, y: attributes.y, sprite: playerSprite, direction: 'stopped' };
+    player = { id: attributes.id, x: attributes.x, y: attributes.y, sprite: playerSprite, direction: 'stopped', it: false };
 
     player.render = function() {
         this.sprite.css({ 'top': this.x + 'px', 'left': this.y + 'px' });
+    }
+
+    player.becomeIt = function() {
+        this.it = true;
+        this.sprite.css('background-color', 'red');
     }
 
     player.move = function() {
@@ -83,17 +89,27 @@ var createPlayer = function(attributes) {
     return player;
 }
 
+var handleNewPlayer = function(event) {
+    player = createPlayer(event.player);
+    players.push(player);
+    player.sprite.hide();
+    $('#canvas').append(player.sprite)
+    player.sprite.fadeIn();
+    console.log('New Player', player)
+    if(world.itPlayerId == null && players.length > 1) {
+        console.log('Choosing IT');
+        random_player = players[Math.floor(Math.random()*players.length)];
+        random_player.becomeIt();
+        socketPush({ "type": "it-changed", "playerId": random_player.id })
+    }
+}
+
 socket.onmessage = function(raw_event) {
     event = JSON.parse(raw_event.data);
     console.log('got event', event)
     switch(event.type) {
         case "new-player":
-            player = createPlayer(event.player);
-            players.push(player);
-            player.sprite.hide();
-            $('#canvas').append(player.sprite)
-            player.sprite.fadeIn();
-            console.log('New Player', player)
+            handleNewPlayer(event);
             break;
         case "move":
             handleMovePlayerEvent(event);
@@ -142,5 +158,3 @@ function loop(timestamp) {
 
 var lastRender = 0
 window.requestAnimationFrame(loop)
-
-
