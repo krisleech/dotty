@@ -22,7 +22,7 @@
 
 (defn send-to! [channel event]
   (do
-    (println "->" (second channel) (first channel) event)
+    (println "-->" (second channel) (first channel) event)
     (send! (last channel) (json/write-str event))))
 
 (defn send-event-by-id [id event]

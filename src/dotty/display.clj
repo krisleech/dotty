@@ -5,8 +5,7 @@
   (:gen-class))
 
 (defn process-display-new-message [channel event]
-    (println "Got new message" event)
-    {:status 302})
+  {:status 302})
 
 ;; random id for now
 (defn display-connect! [channel]

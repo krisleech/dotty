@@ -32,7 +32,6 @@
 (defn process-player-new-message [channel event]
   (let [event-type (:type event)]
     (do
-      (println "<- Player" event)
       (case event-type
         "move" (handle-player-move-event event)
         "new-player" (handle-new-player channel event)

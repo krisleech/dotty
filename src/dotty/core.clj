@@ -29,21 +29,23 @@
   (GET "/join" [] join-handler)
   (GET "/display" [] display-handler))
 
-(defn dispatch-message! [handler channel message]
+(defn dispatch-message! [handler tag channel message]
+  "dispatch message (and channel) to handler, tag is an arbitrary string used to in log messages"
   (let [event (json/read-str message :key-fn keyword)]
+    (println "<--" tag event)
     (handler channel event)))
 
 (defn display-ws-handler [request]
   (with-channel request channel
     (display-connect! channel)
     (on-close channel (partial display-disconnect! channel))
-    (on-receive channel (partial dispatch-message! process-display-new-message channel))))
+    (on-receive channel (partial dispatch-message! process-display-new-message :display channel))))
 
 (defn player-ws-handler [request]
   (with-channel request channel
     (player-connect! channel request)
     (on-close channel (partial player-disconnect! channel))
-    (on-receive channel (partial dispatch-message! process-player-new-message channel))))
+    (on-receive channel (partial dispatch-message! process-player-new-message :player channel))))
 
 (defroutes websocket-routes
   (GET "/ws/display" request (display-ws-handler request))
