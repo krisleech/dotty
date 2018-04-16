@@ -29,6 +29,22 @@
   (GET "/join" [] join-handler)
   (GET "/display" [] display-handler))
 
+(defn dispatch-message! [handler channel message]
+  (let [event (json/read-str message :key-fn keyword)]
+    (handler channel event)))
+
+(defn display-ws-handler [request]
+  (with-channel request channel
+    (display-connect! channel)
+    (on-close channel (partial display-disconnect! channel))
+    (on-receive channel (partial dispatch-message! process-display-new-message channel))))
+
+(defn player-ws-handler [request]
+  (with-channel request channel
+    (player-connect! channel request)
+    (on-close channel (partial player-disconnect! channel))
+    (on-receive channel (partial dispatch-message! process-player-new-message channel))))
+
 (defroutes websocket-routes
   (GET "/ws/display" request (display-ws-handler request))
   (GET "/ws/player" request (player-ws-handler request)))

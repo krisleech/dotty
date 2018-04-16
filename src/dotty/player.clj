@@ -1,6 +1,5 @@
 (ns dotty.player
   (:require [org.httpkit.server :as server :refer [send! with-channel on-close on-receive]]
-            [clojure.data.json :as json]
             [dotty.ws :as ws]
             [dotty.utils :refer [uuid]])
   (:gen-class))
@@ -30,9 +29,8 @@
   (let [player-id (:player-id event)]
     (ws/register-channel! player-id :player channel)))
 
-(defn process-player-new-message [channel message]
-  (let [event (json/read-str message :key-fn keyword)
-        event-type (:type event)]
+(defn process-player-new-message [channel event]
+  (let [event-type (:type event)]
     (do
       (println "<- Player" event)
       (case event-type
@@ -42,11 +40,3 @@
         (println "No handler for event" event-type))
 
       {:status 302})))
-
-;; entry-point, handles all message from players
-(defn player-ws-handler [request]
-  (with-channel request channel
-    (player-connect! channel request)
-    (on-close channel (partial player-disconnect! channel))
-    (on-receive channel (partial process-player-new-message channel))))
-
