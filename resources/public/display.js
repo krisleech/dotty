@@ -96,12 +96,16 @@ var handleNewPlayer = function(event) {
     $('#canvas').append(player.sprite)
     player.sprite.fadeIn();
     console.log('New Player', player)
-    if(world.itPlayerId == null && players.length > 1) {
-        console.log('Choosing IT');
-        random_player = players[Math.floor(Math.random()*players.length)];
-        random_player.becomeIt();
-        socketPush({ "type": "it-changed", "player-id": random_player.id })
-    }
+    if(world.itPlayerId == null && players.length > 1) { selectRandomIt(); }
+}
+
+var selectRandomIt = function() {
+    console.log("current IT", world.itPlayerId)
+    console.log('Choosing IT');
+    random_player = players[Math.floor(Math.random()*players.length)];
+    world.itPlayerId = random_player.id;
+    random_player.becomeIt();
+    socketPush({ "type": "it-changed", "player-id": random_player.id })
 }
 
 socket.onmessage = function(raw_event) {
