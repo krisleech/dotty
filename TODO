@@ -32,6 +32,10 @@ namespace game (join + display) so we can have multiple games
 
 -on event received, inspect URL as it will contain the game-id, look up game to get handler and pass event to handler.
 
+How would this scale across multiple machines since state is stored in-memory for performance.
+Maybe a particular game is always proxied to the same machine, like sticky sessions.
+This could be done transparently without the need for a proxy with multiple domain names.
+
 ## Tag game
 
 add points (increase while not "it")
