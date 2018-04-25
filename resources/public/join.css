@@ -25,3 +25,12 @@ h1 { text-align: center; }
 #right { float: right; 
   /* box-shadow: -10px 0px 5px grey; */
 }
+
+#debug {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: grey;
+}
+
+#debug a:visited, #debug a { color: grey; }

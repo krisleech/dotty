@@ -72,3 +72,13 @@ var sendEvent  = function(event) {
         socket.send(json);
     }
 };
+
+// debug functions
+$(function(){
+    $('#forget_me').click(function(e) {
+        e.preventDefault();
+        console.log("Forgetting playerId")
+        window.localStorage.removeItem('playerId');
+        location.reload(true);
+    })
+});
