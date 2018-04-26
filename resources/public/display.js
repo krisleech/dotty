@@ -64,6 +64,22 @@ var createPlayer = function(attributes) {
         this.sprite.css('background-color', 'red');
     }
 
+    player.becomeNotIt = function() {
+        this.it = false;
+        this.sprite.css('background-color', 'green');
+    }
+
+    player.collision = function(other_player) {
+        // console.log("Collision", this.x, this.y, other_player.x, other_player.y)
+        // 9 2 -3 -2
+        if (this.x >= other_player.x && this.x <= other_player.x + 30) {
+            console.log('x collision')
+            if (this.y >= other_player.y && this.y <= other_player.y + 30) {
+                console.log('x and y collision')
+            }
+        }
+    }
+
     player.move = function() {
         switch(this.direction) {
             case "stopped":
@@ -143,6 +159,16 @@ function update(progress) {
     players.forEach(function(player) {
         player.move();
         player.render();
+        if (player.it == true) {
+            players.forEach(function(other_player) {
+                if (player.id == other_player.id) { return; }
+                if (player.collision(other_player)) {
+                    player.becomeNotIt();
+                    other_player.becomeIt();
+                    socketPush({ "type": "it-changed", "player-id": other_player.id })
+                }
+            })
+        }
     });
 }
 
