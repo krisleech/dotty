@@ -70,14 +70,7 @@ var createPlayer = function(attributes) {
     }
 
     player.collision = function(other_player) {
-        // console.log("Collision", this.x, this.y, other_player.x, other_player.y)
-        // 9 2 -3 -2
-        if (this.x >= other_player.x && this.x <= other_player.x + 30) {
-            console.log('x collision')
-            if (this.y >= other_player.y && this.y <= other_player.y + 30) {
-                console.log('x and y collision')
-            }
-        }
+        return (this.x >= other_player.x - 30 && this.x <= other_player.x + (30 * 2)) && (this.y >= other_player.y - 30 && this.y <= other_player.y + (30 * 2)) 
     }
 
     player.move = function() {
@@ -163,6 +156,7 @@ function update(progress) {
             players.forEach(function(other_player) {
                 if (player.id == other_player.id) { return; }
                 if (player.collision(other_player)) {
+                    console.log("Collision")
                     player.becomeNotIt();
                     other_player.becomeIt();
                     socketPush({ "type": "it-changed", "player-id": other_player.id })
@@ -172,8 +166,15 @@ function update(progress) {
     });
 }
 
+function draw_debug_info() {
+    debug_info = "DEBUG: ";
+    debug_info += players.length;
+    $('#debug-info').html(debug_info);
+}
+
 function draw() {
     // Draw the state of the world
+    draw_debug_info();
 }
 
 function loop(timestamp) {

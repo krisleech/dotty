@@ -42,9 +42,8 @@ add points (increase while not "it")
 decrease points while "it" until zero
 points done on server side and pushed to mobile devices
 
-detect collision between players
-  it x,y is within another players x,y + height/width (i.e bounding box)
-  collision with "it" changes "it" to other player
+when collision occurs the one who was "it" needs to be immune for a few seconds.
+
 push points to mobile device
 
 game lasts for X mins, player with most points at end wins.
