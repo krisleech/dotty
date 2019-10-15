@@ -13,7 +13,12 @@ Visit `localhost:3000` on any number of mobile phones and click "join".
 
 The mobile will have controls to move their player on the screen.
 
+The game is [tag](https://en.wikipedia.org/wiki/Tag_(game)).
+
 There is a two-way connection between the server and clients using web sockets.
+
+The idea is to integrate [phaser.js](https://github.com/photonstorm/phaser)
+next.
 
 ## Installation
 
