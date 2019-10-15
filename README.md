@@ -1,6 +1,19 @@
-# dotty
+# Dotty
 
-Dotty Game Server and UI.
+Dotty Game Server and UI prototype.
+
+Allow multiple players to play the same game displayed on a large screen. This
+could be a smart TV web browser or a regular PC connected to a large monitor.
+
+Players use their mobile phones as an interface (movement controls, score etc.).
+
+Visit `localhost:3000` using the smart TV browser and click "display".
+
+Visit `localhost:3000` on any number of mobile phones and click "join".
+
+The mobile will have controls to move their player on the screen.
+
+There is a two-way connection between the server and clients using web sockets.
 
 ## Installation
 
